@@ -1,8 +1,8 @@
 ﻿<#
     Module: RemoteLocalGroupManager
     Author: Dark-Coffee
-    Version: 1.0
-    Updated: 2020-10-14
+    Version: 1.1
+    Updated: 2020-10-16
     Description: Functions to extend the LocalAccounts module to remote machines.
     Changelog: 
 #>
@@ -20,13 +20,18 @@
 function Get-RemoteLocalGroup {
     param (
         [Parameter(Mandatory=$True)][string]$ComputerName,
-        [Parameter(Mandatory=$false)][SecureString]$Credential
+        [Parameter(Mandatory=$false)][PSCredential]$Credential
     )
 
-    $RemoteLocalGroupCollection = (invoke-command -ComputerName $ComputerName -ScriptBlock {Get-LocalGroup | Select Name,Description})
+    if($Credential -ne $null){
+        $RemoteLocalGroupCollection = (invoke-command -ComputerName $ComputerName -Credential $Credential -ScriptBlock {Get-LocalGroup | Select Name,Description})
+    }else{
+        $RemoteLocalGroupCollection = (invoke-command -ComputerName $ComputerName -ScriptBlock {Get-LocalGroup | Select Name,Description})
+    }
 
-    Write-Host "Groups from $ComputerName :"
+    Write-Output "Groups from $ComputerName :"
     $RemoteLocalGroupCollection | Sort-Object Name | Format-Table
+    
 }
 
 
@@ -41,7 +46,7 @@ function Add-RemoteLocalGroupMember {
         [Parameter(Mandatory=$True)][string]$ComputerName,
         [Parameter(Mandatory=$True)][string]$Group,
         [Parameter(Mandatory=$True)][string]$Member,
-        [Parameter(Mandatory=$false)][SecureString]$Credential
+        [Parameter(Mandatory=$false)][PSCredential]$Credential
     )
 
     invoke-command -ComputerName $ComputerName -ScriptBlock {Add-LocalGroupMember -Group $Using:Group -Member $Using:Member -Confirm}
@@ -52,7 +57,7 @@ function Get-RemoteLocalGroupMember {
     param (
         [Parameter(Mandatory=$True)][string]$ComputerName,
         [Parameter(Mandatory=$True)][string]$Group,
-        [Parameter(Mandatory=$false)][SecureString]$Credential
+        [Parameter(Mandatory=$false)][PSCredential]$Credential
     )
 
     $RemoteLocalGroupMemberCollection = (invoke-command -ComputerName $ComputerName -ScriptBlock {Get-LocalGroupMember -Group $Using:Group})
@@ -67,7 +72,7 @@ function Remove-RemoteLocalGroupMember {
         [Parameter(Mandatory=$True)][string]$ComputerName,
         [Parameter(Mandatory=$True)][string]$Group,
         [Parameter(Mandatory=$True)][string]$Member,
-        [Parameter(Mandatory=$false)][SecureString]$Credential
+        [Parameter(Mandatory=$false)][PSCredential]$Credential
     )
 
     invoke-command -ComputerName $ComputerName -ScriptBlock {Remove-LocalGroupMember -Group $Using:Group -Member $Using:Member -Confirm}
