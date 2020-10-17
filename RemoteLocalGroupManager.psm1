@@ -1,8 +1,8 @@
 ﻿<#
     Module: RemoteLocalGroupManager
     Author: Dark-Coffee
-    Version: 1.1
-    Updated: 2020-10-16
+    Version: 1.2
+    Updated: 2020-10-17
     Description: Functions to extend the LocalAccounts module to remote machines.
     Changelog: 
 #>
@@ -24,9 +24,9 @@ function Get-RemoteLocalGroup {
     )
 
     if($Credential -ne $null){
-        $RemoteLocalGroupCollection = (invoke-command -ComputerName $ComputerName -Credential $Credential -ScriptBlock {Get-LocalGroup | Select Name,Description})
+        $RemoteLocalGroupCollection = (Invoke-Command -ComputerName $ComputerName -Credential $Credential -ScriptBlock {Get-LocalGroup | Select-Object Name,Description})
     }else{
-        $RemoteLocalGroupCollection = (invoke-command -ComputerName $ComputerName -ScriptBlock {Get-LocalGroup | Select Name,Description})
+        $RemoteLocalGroupCollection = (Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-LocalGroup | Select-Object Name,Description})
     }
 
     Write-Output "Groups from $ComputerName :"
@@ -49,7 +49,7 @@ function Add-RemoteLocalGroupMember {
         [Parameter(Mandatory=$false)][PSCredential]$Credential
     )
 
-    invoke-command -ComputerName $ComputerName -ScriptBlock {Add-LocalGroupMember -Group $Using:Group -Member $Using:Member -Confirm}
+    Invoke-Command -ComputerName $ComputerName -ScriptBlock {Add-LocalGroupMember -Group $Using:Group -Member $Using:Member -Confirm}
 }
 
 
@@ -60,7 +60,7 @@ function Get-RemoteLocalGroupMember {
         [Parameter(Mandatory=$false)][PSCredential]$Credential
     )
 
-    $RemoteLocalGroupMemberCollection = (invoke-command -ComputerName $ComputerName -ScriptBlock {Get-LocalGroupMember -Group $Using:Group})
+    $RemoteLocalGroupMemberCollection = (Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-LocalGroupMember -Group $Using:Group})
 
     Write-Host "Members from $Group on $ComputerName :"
     $RemoteLocalGroupMemberCollection | Select-Object ObjectClass,Name,PrincipalSource -ExcludeProperty PSComputerName,SID,RunspaceID | Sort-Object ObjectClass,Name | Write-Output
@@ -75,7 +75,7 @@ function Remove-RemoteLocalGroupMember {
         [Parameter(Mandatory=$false)][PSCredential]$Credential
     )
 
-    invoke-command -ComputerName $ComputerName -ScriptBlock {Remove-LocalGroupMember -Group $Using:Group -Member $Using:Member -Confirm}
+    Invoke-Command -ComputerName $ComputerName -ScriptBlock {Remove-LocalGroupMember -Group $Using:Group -Member $Using:Member -Confirm}
 }
 
 
