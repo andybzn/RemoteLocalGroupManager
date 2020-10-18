@@ -1,8 +1,8 @@
 ﻿<#
     Module: RemoteLocalGroupManager
     Author: Dark-Coffee
-    Version: 1.2
-    Updated: 2020-10-17
+    Version: 1.3
+    Updated: 2020-10-18
     Description: Functions to extend the LocalAccounts module to remote machines.
     Changelog: 
 #>
@@ -49,7 +49,12 @@ function Add-RemoteLocalGroupMember {
         [Parameter(Mandatory=$false)][PSCredential]$Credential
     )
 
-    Invoke-Command -ComputerName $ComputerName -ScriptBlock {Add-LocalGroupMember -Group $Using:Group -Member $Using:Member -Confirm}
+    if($Credential -ne $null){
+        Invoke-Command -ComputerName $ComputerName -Credential $Credential -ScriptBlock {Add-LocalGroupMember -Group $Using:Group -Member $Using:Member -Confirm}
+
+    }else{
+        Invoke-Command -ComputerName $ComputerName -ScriptBlock {Add-LocalGroupMember -Group $Using:Group -Member $Using:Member -Confirm}
+    }
 }
 
 
@@ -60,9 +65,13 @@ function Get-RemoteLocalGroupMember {
         [Parameter(Mandatory=$false)][PSCredential]$Credential
     )
 
-    $RemoteLocalGroupMemberCollection = (Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-LocalGroupMember -Group $Using:Group})
+    if($Credential -ne $null){
+        $RemoteLocalGroupMemberCollection = (Invoke-Command -ComputerName $ComputerName -Credential $Credential -ScriptBlock {Get-LocalGroupMember -Group $Using:Group})
+    }else{
+        $RemoteLocalGroupMemberCollection = (Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-LocalGroupMember -Group $Using:Group})
+    }
 
-    Write-Host "Members from $Group on $ComputerName :"
+    Write-Output "Members from $Group on $ComputerName :"
     $RemoteLocalGroupMemberCollection | Select-Object ObjectClass,Name,PrincipalSource -ExcludeProperty PSComputerName,SID,RunspaceID | Sort-Object ObjectClass,Name | Write-Output
 }
 
@@ -75,7 +84,11 @@ function Remove-RemoteLocalGroupMember {
         [Parameter(Mandatory=$false)][PSCredential]$Credential
     )
 
-    Invoke-Command -ComputerName $ComputerName -ScriptBlock {Remove-LocalGroupMember -Group $Using:Group -Member $Using:Member -Confirm}
+    if($Credential -ne $null){
+        Invoke-Command -ComputerName $ComputerName -Credential $Credential -ScriptBlock {Remove-LocalGroupMember -Group $Using:Group -Member $Using:Member -Confirm}
+    }else{
+        Invoke-Command -ComputerName $ComputerName -ScriptBlock {Remove-LocalGroupMember -Group $Using:Group -Member $Using:Member -Confirm}
+    }
 }
 
 
