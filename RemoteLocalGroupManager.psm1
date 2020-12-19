@@ -1,8 +1,8 @@
 ﻿<#
     Module: RemoteLocalGroupManager
     Author: Dark-Coffee
-    Version: 1.3
-    Updated: 2020-10-18
+    Version: 1.4
+    Updated: 2020-12-19
     Description: Functions to extend the LocalAccounts module to remote machines.
     Changelog: 
 #>
@@ -20,7 +20,7 @@
 function Get-RemoteLocalGroup {
     param (
         [Parameter(Mandatory=$True)][string]$ComputerName,
-        [Parameter(Mandatory=$false)][PSCredential]$Credential
+        [Parameter(Mandatory=$False)][PSCredential]$Credential
     )
 
     if($Credential -ne $null){
@@ -46,7 +46,7 @@ function Add-RemoteLocalGroupMember {
         [Parameter(Mandatory=$True)][string]$ComputerName,
         [Parameter(Mandatory=$True)][string]$Group,
         [Parameter(Mandatory=$True)][string]$Member,
-        [Parameter(Mandatory=$false)][PSCredential]$Credential
+        [Parameter(Mandatory=$False)][PSCredential]$Credential
     )
 
     if($Credential -ne $null){
@@ -62,7 +62,7 @@ function Get-RemoteLocalGroupMember {
     param (
         [Parameter(Mandatory=$True)][string]$ComputerName,
         [Parameter(Mandatory=$True)][string]$Group,
-        [Parameter(Mandatory=$false)][PSCredential]$Credential
+        [Parameter(Mandatory=$False)][PSCredential]$Credential
     )
 
     if($Credential -ne $null){
@@ -81,7 +81,7 @@ function Remove-RemoteLocalGroupMember {
         [Parameter(Mandatory=$True)][string]$ComputerName,
         [Parameter(Mandatory=$True)][string]$Group,
         [Parameter(Mandatory=$True)][string]$Member,
-        [Parameter(Mandatory=$false)][PSCredential]$Credential
+        [Parameter(Mandatory=$False)][PSCredential]$Credential
     )
 
     if($Credential -ne $null){
