@@ -1,8 +1,8 @@
 ﻿<#
     Module: RemoteLocalGroupManager
     Author: Dark-Coffee
-    Version: 1.4
-    Updated: 2020-12-19
+    Version: 1.5
+    Updated: 2020-12-23
     Description: Functions to extend the LocalAccounts module to remote machines.
     Changelog: 
 #>
@@ -32,6 +32,9 @@ function Get-RemoteLocalGroup {
     Write-Output "Groups from $ComputerName :"
     $RemoteLocalGroupCollection | Sort-Object Name | Format-Table
     
+    <#
+    HELP GOES HERE
+    #>
 }
 
 
